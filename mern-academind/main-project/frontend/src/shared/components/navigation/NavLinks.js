@@ -1,32 +1,23 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import "./NavLinks.css";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 
-const NavLinks = (props) => {
-  return (
-    <ul className="nav-links">
-      <li onClick={props.closeDrawer}>
-        <NavLink exact to="/">
-          All Users
-        </NavLink>
-      </li>
-      <li onClick={props.closeDrawer}>
-        <NavLink exact to="/u1/places">
-          My Places
-        </NavLink>
-      </li>
-      <li onClick={props.closeDrawer}>
-        <NavLink exact to="/places/new">
-          Add Place
-        </NavLink>
-      </li>
-      <li onClick={props.closeDrawer}>
-        <NavLink exact to="/auth">
-          Authenticate
-        </NavLink>
-      </li>
-    </ul>
-  );
+import './NavLinks.css';
+
+const NavLinks = props => {
+  return <ul className="nav-links">
+    <li>
+      <NavLink to="/" exact>ALL USERS</NavLink>
+    </li>
+    <li>
+      <NavLink to="/u1/places">MY PLACES</NavLink>
+    </li>
+    <li>
+      <NavLink to="/places/new">ADD PLACE</NavLink>
+    </li>
+    <li>
+      <NavLink to="/auth">AUTHENTICATE</NavLink>
+    </li>
+  </ul>
 };
 
 export default NavLinks;
