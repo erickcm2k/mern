@@ -2,6 +2,7 @@ const HttpError = require("../models/https-error");
 const uuid = require("uuid").v4;
 const { Result, validationResult } = require("express-validator");
 const getCoordsForAddress = require("../util/location");
+const Place = require("../models/place");
 let DUMMY_PLACES = [
   {
     id: "p1",
@@ -16,18 +17,29 @@ let DUMMY_PLACES = [
   },
 ];
 
-const getPlaceById = (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid; // { pid: 'p1' }
 
-  const place = DUMMY_PLACES.find((p) => {
-    return p.id === placeId;
-  });
-
-  if (!place) {
-    throw new HttpError("Could not find a place for the provided id.", 404);
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not find a place.",
+      500
+    );
+    return next(error);
   }
 
-  res.json({ place }); // => { place } => { place: place }
+  if (!place) {
+    const error = new HttpError(
+      "Could not find a place for the provided id.",
+      404
+    );
+    return next(error);
+  }
+
+  res.json({ place: place.toObject({ getters: true }) }); // => { place } => { place: place }
 };
 
 // function getPlaceById() { ... }
@@ -66,16 +78,25 @@ const createPlace = async (req, res, next) => {
     next(error);
   }
   // const title = req.body.title;
-  const createdPlace = {
-    id: uuid(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
     address,
+    location: coordinates,
+    image:
+      "https://images.unsplash.com/photo-1502104034360-73176bb1e92e?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
     creator,
-  };
+  });
 
-  DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
+  try {
+    await createdPlace.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Creating place failed, please try again.",
+      500
+    );
+    return next(error);
+  }
 
   res.status(201).json({ place: createdPlace });
 };

@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
+const mongoose = require("mongoose");
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/user-routes");
 const app = express();
@@ -24,4 +24,20 @@ app.use((error, req, res, next) => {
     .status(error.code || 500)
     .json({ message: error.message || "An unknown error ocurred!" });
 });
-app.listen(5000);
+
+const mongoURL =
+  "mongodb+srv://erick:gpRfQfuUBxK0e2SZ@cluster0.f43r0.mongodb.net/places?retryWrites=true&w=majority";
+mongoose
+  .connect(mongoURL, {
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useNewUrlParser: true,
+  })
+  .then(() => {
+    app.listen(5000);
+    console.log("Server running on port 5000.");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
