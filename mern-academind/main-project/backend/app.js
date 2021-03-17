@@ -6,7 +6,15 @@ const usersRoutes = require("./routes/user-routes");
 const app = express();
 const HttpError = require("./models/https-error");
 app.use(bodyParser.json());
-
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  next();
+});
 app.use("/api/places", placesRoutes);
 app.use("/api/users", usersRoutes);
 // Special error handling middleware function.
@@ -26,7 +34,7 @@ app.use((error, req, res, next) => {
 });
 
 const mongoURL =
-  "mongodb+srv://erick:gpRfQfuUBxK0e2SZ@cluster0.f43r0.mongodb.net/places?retryWrites=true&w=majority";
+  "mongodb+srv://erick:gpRfQfuUBxK0e2SZ@cluster0.f43r0.mongodb.net/mern?retryWrites=true&w=majority";
 mongoose
   .connect(mongoURL, {
     useFindAndModify: false,
