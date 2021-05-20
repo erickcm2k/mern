@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini chat</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="container">
+    <h1 class="mt-5">Mini chat</h1>
+    <hr />
+
+    <form id="myForm">
+      <div class="row">
+        <div class="col-8">
+          <input
+            type="text"
+            id="msgBox"
+            placeholder="Mensaje"
+            class="form-control"
+          />
+        </div>
+
+        <div class="col-4">
+          <button class="btn btn-primary">Enviar</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+      <div class="col">
+        <ul id="messages" class="mt-2"></ul>
+      </div>
+    </div>
+  </body>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+    integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+  <script>
+    const socket = io("http://localhost:8080/");
+
+    const form = document.querySelector("#myForm");
+    const messages = document.querySelector("#messages");
+    const msgBox = document.querySelector("#msgBox");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const msg = msgBox.value;
+
+      socket.emit("msg", {
+        msg,
+      });
+      msgBox.value = "";
+    });
+
+    socket.on("reply", (data) => {
+      messages.innerHTML += `<li>${data.msg}</li>`;
+    });
+  </script>
+</html>
